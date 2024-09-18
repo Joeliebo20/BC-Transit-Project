@@ -87,7 +87,7 @@ batch_time$bus_num <- as.integer(batch_time$bus_num)
 match <- left_join(bu_subset_time, batch_time, by = c('date', 'bus_num', 'am_pm'), relationship = 'many-to-many') %>%  
   group_by(date, bus_num, time.x) %>% 
   mutate(time.diff = abs(as.numeric(difftime(time2.x, time2.y, units = 'secs')))) %>% 
-  slice_min(time.diff)
+  slice_min(time.diff) # joining each ride with its corresponding coordinate data by date, bus number, and closest time
 
 mean(match$time.diff)
 max(match$time.diff)
