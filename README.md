@@ -1,13 +1,12 @@
 # BC Transit Data Analysis
 
 This repository includes various files of code that were used for our projects with the Broome County Department of Transportation (BC Transit).
-Our goal was to use their data to find trends in Binghamton University student ridership during the Fall 2023 semester, as well as how people pay their bus fare (non-students). 
+Our goal was to use their data to find trends in Binghamton University student ridership during the Fall 2023 semester, as well as in how people pay their bus fare (non-students). 
 
 Their data consisted of two main types:
 
-1. Student Rider Transactions - a record of each time a student ID was used to board a bus, including information such as date, time, bus number, and route.
-  These transactions did NOT include location information of the bus/where the student boarded it. This data was contained in a single CSV file.
-2. Bus Geo-Location Data - coordinate locations of each bus, logged every 15 seconds while the bus is turned on, and includes date, time, bus number, latitude, & longitude coordinates. This data was shared with us organized in the following way:
+1. Boarding Rider Transactions - a record of each time someone boarded a BC Transit bus and paid the bus fare, including information such as date, time, bus number, route, fare type, etc., but NOT including accurate location information on where the rider boarded. Binghamton University student IDs allow students to ride free and this data can be filtered to show only BU student ID swipes. This data was contained in a single CSV file.
+2. Bus Geo-Location Data - coordinate locations of each bus, logged every 15 seconds while the bus is turned on, and includes date, time, bus number, latitude, & longitude coordinates. This data was shared with us, organized in the following way:
   Each bus has its own folder (43 total). Within each folder, there are CSV files that contain the location information of the bus on a weekly basis. A folder can contain up to 16 of these files, as there were 16 weeks in the semester. Any missing weeks in the folder were weeks when the bus was not operational at least once during that time.
 
 ## Data Transformation & Assigning Location Coordinates (JOIN_V2.R)
