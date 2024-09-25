@@ -17,7 +17,7 @@ Example: To find the location of a boarding transaction that occured on 9/15/24,
 
 For cases where two locations were equally the most accurate/had the same minimum time difference, a duplicate record of the transaction was made to take into account both possible locations. Since these cases occured less than 2% of the time, these duplicate transactions were kept, as they did not heavily skew the data or its trends.
 
-Because this process was so computationally expensive, it was done on smaller batches of the 43 total buses. The total list of buses was partitioned into batches of only 3-6 buses at a time. In our code, the variable `batch` is initialized as an empty dataframe and is filled up by all location data from the current batch of buses. We load in the student rider transaction data as `bu` and filter it to contain only rides where the buses in the current batch were boarded onto. Finally, `match` is the output of the data join, as the student rider transactions `bu` now have accurate latitude and longitude coordinates from `batch`.
+Because this process was so computationally expensive, it was done on smaller batches of the 43 total buses. The total list of buses was partitioned into batches of only 3-6 buses at a time. In our code, the variable `batch` is initialized as an empty dataframe and is filled up by all location data from the current batch of buses. We load in the student rider transaction data as `bu` and filter it to contain only rides where the buses in the current batch were boarded onto. Finally, `match` is the output of the data join, as the student rider transactions from `bu` now have accurate latitude and longitude coordinates from `batch`.
 
 When saving the outputted data:
 
