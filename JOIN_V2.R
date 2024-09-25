@@ -1,6 +1,10 @@
 library(stringr)
 library(dplyr)
 
+# run this code for all batches of buses
+
+# create empty dataframe to store location data for the current batch of buses:
+
 batch1 <- data.frame(date = as.Date(character()),
                      time = character(),
                      am_pm = character(),
@@ -12,23 +16,31 @@ batch1 <- data.frame(date = as.Date(character()),
                      movement = character(),
                      low.gps.accuracy = character())
 
-for (bus in list.files("/Users/noahrini/Desktop/BC Transit Project/Batch 9")){
+# iterate through each bus folder in the current batch
+
+for (bus in list.files("/Users/noahrini/Desktop/BC Transit Project/Batch 9")){ # change batch number here
   
   print(bus)
   
-  wd <- paste("/Users/noahrini/Desktop/BC Transit Project/Batch 9", bus, sep = "/")
+  wd <- paste("/Users/noahrini/Desktop/BC Transit Project/Batch 9", bus, sep = "/") # change batch number here
   print(wd)
+  
+# iterate through each file in each bus folder - each folder has 16 files, one for each week of location tracking
   
   for (df in list.files(wd)){
     
     setwd(wd)
     print(df)
     
+# read data:
+    
     df <- read.csv(df, header = TRUE)
     df <- df[-c(1:16), ]
     
     colnames(df) <- df[1, ]
     df <- df[-1, ]
+    
+# skip current sheet if it has no data/data is fully missing
     
     if (nrow(df) == 0){
       print("No data found")
@@ -50,6 +62,8 @@ for (bus in list.files("/Users/noahrini/Desktop/BC Transit Project/Batch 9")){
     
     colnames(df)[28] <- 'movement'
     colnames(df)[31] <- 'low.gps.accuracy'
+
+# remove unneeded columns:
     
     df <- df %>% 
       select(-c(5:9, 12:14, 17:27, 29, 30)) %>% 
@@ -58,6 +72,8 @@ for (bus in list.files("/Users/noahrini/Desktop/BC Transit Project/Batch 9")){
     print(paste(nrow(df), 'rows'))
     
     print("--------------------")
+    
+# add data from current bus to the initial dataframe:
     
     batch1 <- union(batch1, df)
     
@@ -89,8 +105,12 @@ match <- left_join(bu_subset_time, batch_time, by = c('date', 'bus_num', 'am_pm'
   mutate(time.diff = abs(as.numeric(difftime(time2.x, time2.y, units = 'secs')))) %>% 
   slice_min(time.diff) # joining each ride with its corresponding coordinate data by date, bus number, and closest time
 
+# if the following lines return NA values, there is missing data somewhere
+
 mean(match$time.diff)
 max(match$time.diff)
+
+# the following can be used for trouble shooting:
 
 # match %>% filter(if_any(everything(), is.na)) : use to check for missing dates
 
