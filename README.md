@@ -1,13 +1,14 @@
 # BC Transit Data Analysis
 
-This repository includes various files of code that were used for our project with the Broome County Department of Transportation (BC Transit).
-Our goal was to use their data to find trends in Binghamton University student ridership during the Fall 2023 semester.
+This repository includes various files of code that were used for our projects with the Broome County Department of Transportation (BC Transit).
+Our goal was to use their data to find trends in Binghamton University student ridership during the Fall 2023 semester, as well as how people pay their bus fare (non-students). 
 
 Their data consisted of two main types:
 
 1. Student Rider Transactions - a record of each time a student ID was used to board a bus, including information such as date, time, bus number, and route.
-  These transactions did NOT include location information of the bus/where the student boarded it.
-2. Bus Geo-Location Data - coordinate locations of each bus, logged every 15 seconds while the bus is turned on. Includes date, time, bus number, latitude, & longitude coordinates.
+  These transactions did NOT include location information of the bus/where the student boarded it. This data was contained in a single CSV file.
+2. Bus Geo-Location Data - coordinate locations of each bus, logged every 15 seconds while the bus is turned on, and includes date, time, bus number, latitude, & longitude coordinates. This data was shared with us organized in the following way:
+  Each bus has its own folder (43 total). Within each folder, there are CSV files that contain the location information of the bus on a weekly basis. A folder can contain up to 16 of these files, as there were 16 weeks in the semester. Any missing weeks in the folder were weeks when the bus was not operational at least once during that time.
 
 ## Data Transformation & Assigning Location Coordinates (JOIN_V2.R)
 
@@ -16,6 +17,16 @@ To create the desired table for analysis, showing each student boarding with its
 Example: To find the location of a boarding transaction that occured on 9/15/24, 2:50:27 PM on bus 703, we look at the location data for bus 703 from that date and close to that time. Let's say we have the location coordinates of the bus logged at these times: 2:49:45 ('location 1'), 2:50:00 ('location 2'), 2:50:15 ('location 3'), 2:50:30 ('location 4'). Because location 4 was logged the closest in time to when the student actually boarded the bus, with only a 3 second time difference between these events, we conclude that location 4 accurately estimates where the student boarded the bus.
 
 For cases where two locations were equally the most accurate/had the same minimum time difference, a duplicate record of the transaction was made to take into account both possible locations. Since these cases occured less than 2% of the time, these duplicate transactions were kept, as they did not heavily skew the data or its trends.
+
+Because this process was so computationally expensive, it was done on smaller batches of the 43 total buses. The total list of buses was partitioned into batches of only 3-6 buses at a time. In our code, the variable `batch` is initialized as an empty dataframe and is filled up by all location data from the current batch of buses. We load in the student rider transaction data as `bu` and filter it to contain only rides where the buses in the current batch were boarded onto. Finally, `match` is the output of the data join, as the student rider transactions `bu` now have accurate latitude and longitude coordinates from `batch`.
+
+When saving the outputted data:
+
+```
+write.csv(match, 'batchn.csv')
+```
+
+File name 'batchn.csv' indicates this is the *nth* iteration of the code run/*nth* batch of buses. Once all batches are completed, these separate batch files are finally unioned together to create the completed master data set that we desired, with all student rider transactions from all buses now having accurate location coordinates.
 
 ### Accuracy
 
