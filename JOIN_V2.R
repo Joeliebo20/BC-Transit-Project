@@ -5,7 +5,7 @@ library(dplyr)
 
 # create empty dataframe to store location data for the current batch of buses:
 
-batch1 <- data.frame(date = as.Date(character()),
+batch <- data.frame(date = as.Date(character()),
                      time = character(),
                      am_pm = character(),
                      bus_num = character(),
@@ -75,7 +75,7 @@ for (bus in list.files("/Users/noahrini/Desktop/BC Transit Project/Batch 9")){ #
     
 # add data from current bus to the initial dataframe:
     
-    batch1 <- union(batch1, df)
+    batch <- union(batch, df)
     
   }
   
@@ -94,8 +94,8 @@ bu_subset <- bu %>%
 time2 <- as.POSIXlt(bu_subset$time, format = '%H:%M:%S %p')
 bu_subset_time <- cbind(bu_subset, time2)
 
-time2 <- as.POSIXlt(batch1$time, format = '%H:%M:%S %p')
-batch_time <- cbind(batch1, time2)
+time2 <- as.POSIXlt(batch$time, format = '%H:%M:%S %p')
+batch_time <- cbind(batch, time2)
 
 batch_time$date <- as.character(batch_time$date)
 batch_time$bus_num <- as.integer(batch_time$bus_num)
