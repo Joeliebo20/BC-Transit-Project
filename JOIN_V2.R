@@ -88,19 +88,19 @@ setwd("/Users/noahrini/Desktop/BC Transit Project/FINAL DATA")
 
 bu <- read.csv('BU_RIDES_V2.csv', header = TRUE)
 
-bu_subset <- bu %>% 
+bu <- bu %>% 
   filter(bus_num %in% c(704, 742, 748)) # change buses in batch here
 
-time2 <- as.POSIXlt(bu_subset$time, format = '%H:%M:%S %p')
-bu_subset_time <- cbind(bu_subset, time2)
+time2 <- as.POSIXlt(bu$time, format = '%H:%M:%S %p')
+bu <- cbind(bu, time2)
 
 time2 <- as.POSIXlt(batch$time, format = '%H:%M:%S %p')
-batch_time <- cbind(batch, time2)
+batch <- cbind(batch, time2)
 
-batch_time$date <- as.character(batch_time$date)
-batch_time$bus_num <- as.integer(batch_time$bus_num)
+batch$date <- as.character(batch$date)
+batch$bus_num <- as.integer(batch$bus_num)
 
-match <- left_join(bu_subset_time, batch_time, by = c('date', 'bus_num', 'am_pm'), relationship = 'many-to-many') %>%  
+match <- left_join(bu, batch, by = c('date', 'bus_num', 'am_pm'), relationship = 'many-to-many') %>%  
   group_by(date, bus_num, time.x) %>% 
   mutate(time.diff = abs(as.numeric(difftime(time2.x, time2.y, units = 'secs')))) %>% 
   slice_min(time.diff) # joining each ride with its corresponding coordinate data by date, bus number, and closest time
